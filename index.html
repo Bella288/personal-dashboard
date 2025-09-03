@@ -543,6 +543,11 @@
                 width: 100%;
                 text-align: center;
             }
+            
+            .weather-details {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -583,19 +588,14 @@
                         
                         <div class="weather-details">
                             <div class="weather-detail">
-                                <i class="fas fa-wind"></i>
+                                <i class="fas fa-tint"></i>
                                 <div id="humidity">--%</div>
                                 <div>Humidity</div>
                             </div>
                             <div class="weather-detail">
-                                <i class="fas fa-tachometer-alt"></i>
+                                <i class="fas fa-wind"></i>
                                 <div id="wind">-- mph</div>
-                                <div>Wind</div>
-                            </div>
-                            <div class="weather-detail">
-                                <i class="fas fa-compress-arrows-alt"></i>
-                                <div id="pressure">-- hPa</div>
-                                <div>Pressure</div>
+                                <div>Wind Speed</div>
                             </div>
                         </div>
                     </div>
@@ -664,7 +664,6 @@
         const locationElement = document.getElementById('location');
         const humidityElement = document.getElementById('humidity');
         const windElement = document.getElementById('wind');
-        const pressureElement = document.getElementById('pressure');
         const todoForm = document.getElementById('todo-form');
         const todoInput = document.getElementById('todo-input');
         const dueDateInput = document.getElementById('due-date');
@@ -750,13 +749,12 @@
         async function getWeather(zipCode) {
             locationElement.textContent = `ZIP: ${zipCode}`;
             weatherDescription.textContent = 'Loading...';
+            humidityElement.textContent = '--%';
+            windElement.textContent = '-- mph';
             
             try {
                 // First, get the coordinates for the ZIP code using NWS API
-                // Note: NWS doesn't have a direct ZIP to coordinates API, so we'll use a fallback
-                // In a real implementation, you might need to use a different service for this step
                 const geoResponse = await fetch(`https://api.weather.gov/points/${zipCode}`);
-                console.log("Response recieved: ", geoResponse)
                 
                 if (!geoResponse.ok) {
                     throw new Error('Failed to fetch location data from NWS');
@@ -764,26 +762,39 @@
                 
                 const geoData = await geoResponse.json();
                 
-                // Then get the forecast using the coordinates from NWS
-                const forecastResponse = await fetch(geoData.properties.forecast);
-                const forecastData = await forecastResponse.json();
-                
-                if (!forecastResponse.ok) {
-                    throw new Error('Failed to fetch forecast data from NWS');
+                // Get the observation stations for this location
+                const stationsResponse = await fetch(geoData.properties.observationStations);
+                if (!stationsResponse.ok) {
+                    throw new Error('Failed to fetch station data from NWS');
                 }
                 
-                // Get the current weather conditions
-                const currentWeather = forecastData.properties.periods[0];
+                const stationsData = await stationsResponse.json();
+                if (!stationsData.features || stationsData.features.length === 0) {
+                    throw new Error('No weather stations found for this location');
+                }
+                
+                // Use the first station
+                const stationId = stationsData.features[0].properties.stationIdentifier;
+                
+                // Get the latest observations from this station
+                const observationsResponse = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
+                if (!observationsResponse.ok) {
+                    throw new Error('Failed to fetch observation data from NWS');
+                }
+                
+                const observationsData = await observationsResponse.json();
+                const properties = observationsData.properties;
                 
                 // Update the UI with the weather data
-                updateWeatherUI(currentWeather);
+                updateWeatherUI(properties);
                 
                 // Save to localStorage
                 const weatherToSave = {
-                    temp: currentWeather.temperature,
-                    description: currentWeather.shortForecast,
-                    icon: getWeatherIcon(currentWeather.shortForecast),
-                    wind: currentWeather.windSpeed,
+                    temp: properties.temperature.value ? Math.round((properties.temperature.value * 9/5) + 32) : '--',
+                    description: properties.textDescription || 'No description',
+                    icon: getWeatherIcon(properties.textDescription),
+                    wind: properties.windSpeed.value ? `${Math.round(properties.windSpeed.value * 2.23694)} mph` : '-- mph',
+                    humidity: properties.relativeHumidity.value ? `${Math.round(properties.relativeHumidity.value)}%` : '--%',
                     zipCode: zipCode
                 };
                 localStorage.setItem('weatherData', JSON.stringify(weatherToSave));
@@ -798,18 +809,34 @@
 
         // Update weather UI with data
         function updateWeatherUI(data) {
-            temperatureElement.textContent = `${data.temperature}°F`;
-            weatherDescription.textContent = data.shortForecast;
-            weatherIcon.innerHTML = getWeatherIcon(data.shortForecast);
-            windElement.textContent = data.windSpeed;
+            // Convert temperature from Celsius to Fahrenheit if available
+            const tempF = data.temperature.value ? Math.round((data.temperature.value * 9/5) + 32) : '--';
+            temperatureElement.textContent = `${tempF}°F`;
             
-            // NWS doesn't provide humidity and pressure in the basic forecast
-            humidityElement.textContent = 'N/A';
-            pressureElement.textContent = 'N/A';
+            weatherDescription.textContent = data.textDescription || 'No description available';
+            weatherIcon.innerHTML = getWeatherIcon(data.textDescription);
+            
+            // Display wind speed with units
+            if (data.windSpeed && data.windSpeed.value) {
+                // Convert m/s to mph
+                const windMph = Math.round(data.windSpeed.value * 2.23694);
+                windElement.textContent = `${windMph} mph`;
+            } else {
+                windElement.textContent = '-- mph';
+            }
+            
+            // Display humidity if available
+            if (data.relativeHumidity && data.relativeHumidity.value) {
+                humidityElement.textContent = `${Math.round(data.relativeHumidity.value)}%`;
+            } else {
+                humidityElement.textContent = '--%';
+            }
         }
 
         // Get appropriate weather icon based on NWS description
         function getWeatherIcon(description) {
+            if (!description) return '<i class="fas fa-cloud"></i>';
+            
             description = description.toLowerCase();
             
             if (description.includes('sun') || description.includes('clear')) {
@@ -838,8 +865,7 @@
                 weatherDescription.textContent = weatherData.description;
                 weatherIcon.innerHTML = weatherData.icon;
                 windElement.textContent = weatherData.wind;
-                humidityElement.textContent = 'N/A';
-                pressureElement.textContent = 'N/A';
+                humidityElement.textContent = weatherData.humidity;
                 locationElement.textContent = `ZIP: ${weatherData.zipCode}`;
             }
         }
