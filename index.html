@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .zip-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .zip-form input {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            width: 200px;
+            font-size: 1rem;
+        }
+        
+        .zip-form button {
+            padding: 10px 20px;
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .zip-form button:hover {
+            background: #ff5252;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .widget {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+        
+        .widget:hover {
+            transform: translateY(-5px);
+        }
+        
+        .widget h2 {
+            margin-bottom: 15px;
+            color: #444;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        
+        /* Time Widget */
+        #time {
+            font-size: 2.8rem;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        #date {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Weather Widget */
+        .weather-info {
+            text-align: center;
+        }
+        
+        #weather-icon {
+            font-size: 4rem;
+            margin: 10px 0;
+        }
+        
+        #temperature {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        #weather-description {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Todo Widget */
+        #todo-form {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        #todo-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        #todo-form button {
+            padding: 10px 15px;
+            background: #4ECDC4;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        #todo-list {
+            list-style-type: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .todo-text {
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        .todo-completed .todo-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+        
+        .delete-btn {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        /* Quote Widget */
+        #quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            text-align: center;
+            margin: 20px 0;
+            color: #444;
+            line-height: 1.5;
+        }
+        
+        #author {
+            text-align: right;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        #new-quote {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        #new-quote:hover {
+            background: #5a6fd5;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Personal Dashboard</h1>
+            <div class="zip-form">
+                <input type="text" id="zip-input" placeholder="Enter your ZIP code">
+                <button id="save-zip">Save ZIP</button>
+            </div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="widget">
+                <h2>Current Time</h2>
+                <div id="time">00:00:00</div>
+                <div id="date">Monday, January 1, 2023</div>
+            </div>
+            
+            <div class="widget">
+                <h2>Weather</h2>
+                <div class="weather-info">
+                    <div id="weather-icon">⛅</div>
+                    <div id="temperature">--°F</div>
+                    <div id="weather-description">Enter your ZIP code</div>
+                    <div id="location">ZIP: --</div>
+                </div>
+            </div>
+            
+            <div class="widget">
+                <h2>To-Do List</h2>
+                <form id="todo-form">
+                    <input type="text" id="todo-input" placeholder="Add a new task...">
+                    <button type="submit">Add</button>
+                </form>
+                <ul id="todo-list"></ul>
+            </div>
+            
+            <div class="widget">
+                <h2>Inspirational Quote</h2>
+                <div id="quote">The only way to do great work is to love what you do.</div>
+                <div id="author">- Steve Jobs</div>
+                <button id="new-quote">New Quote</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const timeElement = document.getElementById('time');
+        const dateElement = document.getElementById('date');
+        const zipInput = document.getElementById('zip-input');
+        const saveZipButton = document.getElementById('save-zip');
+        const weatherIcon = document.getElementById('weather-icon');
+        const temperatureElement = document.getElementById('temperature');
+        const weatherDescription = document.getElementById('weather-description');
+        const locationElement = document.getElementById('location');
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoList = document.getElementById('todo-list');
+        const quoteElement = document.getElementById('quote');
+        const authorElement = document.getElementById('author');
+        const newQuoteButton = document.getElementById('new-quote');
+
+        // Load saved ZIP code from localStorage
+        const savedZip = localStorage.getItem('zipCode');
+        if (savedZip) {
+            zipInput.value = savedZip;
+            getWeather(savedZip);
+        }
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const date = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            timeElement.textContent = time;
+            dateElement.textContent = date;
+        }
+
+        // Initial time update and set interval
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Save ZIP code
+        saveZipButton.addEventListener('click', () => {
+            const zipCode = zipInput.value.trim();
+            if (zipCode) {
+                localStorage.setItem('zipCode', zipCode);
+                getWeather(zipCode);
+            }
+        });
+
+        // Get weather data (simulated with mock data)
+        function getWeather(zipCode) {
+            // In a real application, you would fetch from a weather API
+            // For this example, we'll use mock data
+            locationElement.textContent = `ZIP: ${zipCode}`;
+            
+            // Simulate API call with setTimeout
+            setTimeout(() => {
+                // Mock weather data based on season
+                const months = new Date().getMonth();
+                let temp, description, icon;
+                
+                if (months >= 2 && months <= 4) { // Spring
+                    temp = Math.floor(Math.random() * 15) + 60; // 60-75°F
+                    description = "Partly Cloudy";
+                    icon = "🌤️";
+                } else if (months >= 5 && months <= 7) { // Summer
+                    temp = Math.floor(Math.random() * 20) + 75; // 75-95°F
+                    description = "Sunny";
+                    icon = "☀️";
+                } else if (months >= 8 && months <= 10) { // Fall
+                    temp = Math.floor(Math.random() * 20) + 50; // 50-70°F
+                    description = "Cloudy";
+                    icon = "☁️";
+                } else { // Winter
+                    temp = Math.floor(Math.random() * 30) + 20; // 20-50°F
+                    description = "Snowy";
+                    icon = "❄️";
+                }
+                
+                temperatureElement.textContent = `${temp}°F`;
+                weatherDescription.textContent = description;
+                weatherIcon.textContent = icon;
+                
+                // Save to localStorage
+                const weatherData = { temp, description, icon, zipCode };
+                localStorage.setItem('weatherData', JSON.stringify(weatherData));
+            }, 500);
+        }
+
+        // Load saved weather data
+        const savedWeather = localStorage.getItem('weatherData');
+        if (savedWeather) {
+            const weatherData = JSON.parse(savedWeather);
+            temperatureElement.textContent = `${weatherData.temp}°F`;
+            weatherDescription.textContent = weatherData.description;
+            weatherIcon.textContent = weatherData.icon;
+            locationElement.textContent = `ZIP: ${weatherData.zipCode}`;
+        }
+
+        // To-do list functionality
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'todo-completed' : ''}`;
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+                checkbox.addEventListener('change', () => toggleTodo(index));
+                
+                const span = document.createElement('span');
+                span.className = 'todo-text';
+                span.textContent = todo.text;
+                
+                const button = document.createElement('button');
+                button.className = 'delete-btn';
+                button.textContent = 'Delete';
+                button.addEventListener('click', () => deleteTodo(index));
+                
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(button);
+                
+                todoList.appendChild(li);
+            });
+        }
+
+        function addTodo(e) {
+            e.preventDefault();
+            const text = todoInput.value.trim();
+            if (text) {
+                todos.push({ text, completed: false });
+                saveTodos();
+                renderTodos();
+                todoInput.value = '';
+            }
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            saveTodos();
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        todoForm.addEventListener('submit', addTodo);
+        renderTodos();
+
+        // Quotes functionality
+        const quotes = [
+            {
+                text: "The only way to do great work is to love what you do.",
+                author: "Steve Jobs"
+            },
+            {
+                text: "Life is what happens when you're busy making other plans.",
+                author: "John Lennon"
+            },
+            {
+                text: "The future belongs to those who believe in the beauty of their dreams.",
+                author: "Eleanor Roosevelt"
+            },
+            {
+                text: "Spread love everywhere you go. Let no one ever come to you without leaving happier.",
+                author: "Mother Teresa"
+            },
+            {
+                text: "The only thing we have to fear is fear itself.",
+                author: "Franklin D. Roosevelt"
+            },
+            {
+                text: "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+                author: "Ralph Waldo Emerson"
+            }
+        ];
+
+        let currentQuoteIndex = parseInt(localStorage.getItem('quoteIndex')) || 0;
+
+        function showQuote() {
+            const quote = quotes[currentQuoteIndex];
+            quoteElement.textContent = quote.text;
+            authorElement.textContent = `- ${quote.author}`;
+        }
+
+        function nextQuote() {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            localStorage.setItem('quoteIndex', currentQuoteIndex);
+            showQuote();
+        }
+
+        newQuoteButton.addEventListener('click', nextQuote);
+        showQuote();
+    </script>
+</body>
+</html>
