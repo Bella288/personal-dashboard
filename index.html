@@ -756,6 +756,7 @@
                 // Note: NWS doesn't have a direct ZIP to coordinates API, so we'll use a fallback
                 // In a real implementation, you might need to use a different service for this step
                 const geoResponse = await fetch(`https://api.weather.gov/points/${zipCode}`);
+                console.log("Response recieved: ", geoResponse)
                 
                 if (!geoResponse.ok) {
                     throw new Error('Failed to fetch location data from NWS');
