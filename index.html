@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Dashboard</title>
+    <title>Personal Dashboard with Weather Alerts</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -23,6 +23,54 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+        }
+        
+        /* Alert Banner Styles */
+        .alert-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .alert-banner.warning {
+            background: linear-gradient(90deg, #ff5252, #ff7b7b);
+            color: white;
+        }
+        
+        .alert-banner.watch {
+            background: linear-gradient(90deg, #ffb142, #ffda79);
+            color: #333;
+        }
+        
+        .alert-content {
+            white-space: nowrap;
+            animation: scroll 30s linear infinite;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .alert-banner.hidden {
+            display: none;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
         
         /* Navigation Bar */
@@ -548,10 +596,23 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            
+            .alert-content {
+                font-size: 0.9rem;
+                animation: scroll 15s linear infinite;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Alert Banner -->
+    <div id="alert-banner" class="alert-banner hidden">
+        <div class="alert-content">
+            <i id="alert-icon" class="alert-icon fas fa-exclamation-circle"></i>
+            <span id="alert-text">No active alerts</span>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Navigation Bar -->
         <nav class="navbar">
@@ -679,6 +740,9 @@
         const linkNameInput = document.getElementById('link-name');
         const linkUrlInput = document.getElementById('link-url');
         const contentContainer = document.getElementById('content-container');
+        const alertBanner = document.getElementById('alert-banner');
+        const alertIcon = document.getElementById('alert-icon');
+        const alertText = document.getElementById('alert-text');
 
         // Set default due date to today and time to end of day
         const today = new Date();
@@ -690,6 +754,7 @@
         if (savedZip) {
             zipInput.value = savedZip;
             getWeather(savedZip);
+            checkAlerts(savedZip);
         }
 
         // Navigation functionality
@@ -742,6 +807,7 @@
             if (zipCode) {
                 localStorage.setItem('zipCode', zipCode);
                 getWeather(zipCode);
+                checkAlerts(zipCode);
             }
         });
 
@@ -825,6 +891,96 @@
                 // Try to load saved weather data as fallback
                 loadSavedWeather();
             }
+        }
+
+        // Check for weather alerts
+        async function checkAlerts(zipCode) {
+            try {
+                // First, get the coordinates for the ZIP code
+                const coordinates = await getCoordinatesFromZip(zipCode);
+                
+                // Check for alerts at this location
+                const alertsResponse = await fetch(`https://api.weather.gov/alerts/active?point=${coordinates.lat},${coordinates.lon}`);
+                
+                if (!alertsResponse.ok) {
+                    throw new Error('Failed to fetch alerts data from NWS');
+                }
+                
+                const alertsData = await alertsResponse.json();
+                
+                // Process alerts
+                processAlerts(alertsData.features);
+                
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+                // Hide alert banner if there's an error
+                alertBanner.classList.add('hidden');
+            }
+        }
+
+        // Process and display alerts
+        function processAlerts(alerts) {
+            if (!alerts || alerts.length === 0) {
+                alertBanner.classList.add('hidden');
+                return;
+            }
+            
+            // Separate warnings and watches
+            const warnings = [];
+            const watches = [];
+            
+            alerts.forEach(alert => {
+                const properties = alert.properties;
+                const event = properties.eventType;
+                const headline = properties.headline;
+                const description = properties.description;
+                
+                if (event.includes('Warning')) {
+                    warnings.push({ headline, description });
+                } else if (event.includes('Watch')) {
+                    watches.push({ headline, description });
+                }
+            });
+            
+            // Display alerts based on priority (warnings first)
+            if (warnings.length > 0) {
+                showAlertBanner('warning', warnings);
+            } else if (watches.length > 0) {
+                showAlertBanner('watch', watches);
+            } else {
+                alertBanner.classList.add('hidden');
+            }
+        }
+
+        // Show alert banner with appropriate style and message
+        function showAlertBanner(type, alerts) {
+            // Set banner style based on alert type
+            alertBanner.className = `alert-banner ${type}`;
+            
+            // Create alert message
+            let message = '';
+            if (type === 'warning') {
+                message = 'WEATHER WARNING: ';
+            } else {
+                message = 'WEATHER WATCH: ';
+            }
+            
+            // Add all alert headlines
+            alerts.forEach((alert, index) => {
+                if (index > 0) message += ' | ';
+                message += alert.headline;
+            });
+            
+            // Set icon based on alert type
+            if (type === 'warning') {
+                alertIcon.className = 'alert-icon fas fa-exclamation-triangle';
+            } else {
+                alertIcon.className = 'alert-icon fas fa-binoculars';
+            }
+            
+            // Set text and show banner
+            alertText.textContent = message;
+            alertBanner.classList.remove('hidden');
         }
 
         // Update weather UI with data
@@ -1240,11 +1396,12 @@
         // Initialize saved weather data
         loadSavedWeather();
         
-        // Set up weather refresh every 30 minutes
+        // Set up weather refresh every minute
         if (savedZip) {
             setInterval(() => {
                 getWeather(savedZip);
-            }, 1800000); // 30 minutes
+                checkAlerts(savedZip);
+            }, 60000); // 60 seconds
         }
     </script>
 </body>
