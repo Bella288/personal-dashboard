@@ -25,6 +25,35 @@
             margin: 0 auto;
         }
         
+        /* Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+        }
+        
         header {
             text-align: center;
             margin-bottom: 30px;
@@ -334,6 +363,159 @@
             background-color: #2ed573;
         }
         
+        /* Quick Links Page Styles */
+        #quick-links-page {
+            display: none;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .link-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #0066cc;
+        }
+        
+        .link-card:active {
+            transform: translateY(-2px);
+        }
+        
+        .favicon-container {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 50%;
+            padding: 0.5rem;
+        }
+        
+        .default-favicon {
+            font-size: 32px;
+            color: #666;
+        }
+        
+        .link-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        
+        .domain-name {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+            word-break: break-word;
+        }
+        
+        .link-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+        
+        .delete-link-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .link-card:hover .delete-link-btn {
+            opacity: 1;
+        }
+        
+        .delete-link-btn:hover {
+            background: #ff3742;
+            transform: scale(1.1);
+        }
+        
+        .no-links {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            grid-column: 1 / -1;
+            font-size: 1.1rem;
+        }
+        
+        /* Add link form styles */
+        .add-link-form {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .add-link-form h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .add-link-form input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .add-link-form input:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+        
+        .add-link-form button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .add-link-form button:hover {
+            background: #0052a3;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -350,77 +532,123 @@
             .due-date-container {
                 flex-direction: column;
             }
+            
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .navbar a {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-home"></i> Personal Dashboard</h1>
-            <div class="zip-form">
-                <input type="text" id="zip-input" placeholder="Enter your ZIP code">
-                <button id="save-zip"><i class="fas fa-save"></i> Save ZIP</button>
-            </div>
-        </header>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#" data-page="quick-links"><i class="fas fa-link"></i> Quick Links</a>
+        </nav>
         
-        <div class="dashboard">
-            <div class="widget">
-                <h2><i class="fas fa-clock"></i> Current Time</h2>
-                <div class="time-container">
-                    <div id="time">00:00:00</div>
-                    <div id="date">Monday, January 1, 2023</div>
+        <!-- Dashboard Page -->
+        <div id="dashboard-page">
+            <header>
+                <h1><i class="fas fa-home"></i> Personal Dashboard</h1>
+                <div class="zip-form">
+                    <input type="text" id="zip-input" placeholder="Enter your ZIP code">
+                    <button id="save-zip"><i class="fas fa-save"></i> Save ZIP</button>
                 </div>
-            </div>
+            </header>
             
-            <div class="widget">
-                <h2><i class="fas fa-cloud-sun"></i> Weather</h2>
-                <div class="weather-info">
-                    <div id="weather-icon"><i class="fas fa-sun"></i></div>
-                    <div id="temperature">--°F</div>
-                    <div id="weather-description">Enter your ZIP code</div>
-                    <div id="location">ZIP: --</div>
-                    
-                    <div class="weather-details">
-                        <div class="weather-detail">
-                            <i class="fas fa-wind"></i>
-                            <div id="humidity">--%</div>
-                            <div>Humidity</div>
-                        </div>
-                        <div class="weather-detail">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <div id="wind">-- mph</div>
-                            <div>Wind</div>
-                        </div>
-                        <div class="weather-detail">
-                            <i class="fas fa-compress-arrows-alt"></i>
-                            <div id="pressure">-- hPa</div>
-                            <div>Pressure</div>
+            <div class="dashboard">
+                <div class="widget">
+                    <h2><i class="fas fa-clock"></i> Current Time</h2>
+                    <div class="time-container">
+                        <div id="time">00:00:00</div>
+                        <div id="date">Monday, January 1, 2023</div>
+                    </div>
+                </div>
+                
+                <div class="widget">
+                    <h2><i class="fas fa-cloud-sun"></i> Weather</h2>
+                    <div class="weather-info">
+                        <div id="weather-icon"><i class="fas fa-sun"></i></div>
+                        <div id="temperature">--°F</div>
+                        <div id="weather-description">Enter your ZIP code</div>
+                        <div id="location">ZIP: --</div>
+                        
+                        <div class="weather-details">
+                            <div class="weather-detail">
+                                <i class="fas fa-wind"></i>
+                                <div id="humidity">--%</div>
+                                <div>Humidity</div>
+                            </div>
+                            <div class="weather-detail">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <div id="wind">-- mph</div>
+                                <div>Wind</div>
+                            </div>
+                            <div class="weather-detail">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                                <div id="pressure">-- hPa</div>
+                                <div>Pressure</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="widget">
-                <h2><i class="fas fa-tasks"></i> To-Do List</h2>
-                <form id="todo-form">
-                    <input type="text" id="todo-input" placeholder="Add a new task...">
-                    <div class="due-date-container">
-                        <input type="date" id="due-date" placeholder="Due date">
-                        <input type="time" id="due-time" placeholder="Due time">
+                
+                <div class="widget">
+                    <h2><i class="fas fa-tasks"></i> To-Do List</h2>
+                    <form id="todo-form">
+                        <input type="text" id="todo-input" placeholder="Add a new task...">
+                        <div class="due-date-container">
+                            <input type="date" id="due-date" placeholder="Due date">
+                            <input type="time" id="due-time" placeholder="Due time">
+                        </div>
+                        <button type="submit"><i class="fas fa-plus"></i> Add Task</button>
+                    </form>
+                    <ul id="todo-list"></ul>
+                </div>
+                
+                <div class="widget">
+                    <h2><i class="fas fa-quote-left"></i> Inspirational Quote</h2>
+                    <div class="quote-container">
+                        <div id="quote">The only way to do great work is to love what you do.</div>
+                        <div id="author">- Steve Jobs</div>
+                        <button id="new-quote"><i class="fas fa-sync"></i> New Quote</button>
                     </div>
-                    <button type="submit"><i class="fas fa-plus"></i> Add Task</button>
-                </form>
-                <ul id="todo-list"></ul>
-            </div>
-            
-            <div class="widget">
-                <h2><i class="fas fa-quote-left"></i> Inspirational Quote</h2>
-                <div class="quote-container">
-                    <div id="quote">The only way to do great work is to love what you do.</div>
-                    <div id="author">- Steve Jobs</div>
-                    <button id="new-quote"><i class="fas fa-sync"></i> New Quote</button>
                 </div>
             </div>
+        </div>
+        
+        <!-- Quick Links Page -->
+        <div id="quick-links-page">
+            <header>
+                <h1><i class="fas fa-link"></i> Quick Links</h1>
+                <p>Save and access your frequently used links</p>
+            </header>
+            
+            <main>
+                <section class="add-link-form">
+                    <h2>Add New Link</h2>
+                    <form id="add-link-form">
+                        <input type="text" id="link-name" placeholder="Link Name" required />
+                        <input type="url" id="link-url" placeholder="URL (include https://)" required />
+                        <button type="submit">➕ Add Link</button>
+                    </form>
+                </section>
+                
+                <section class="links-list">
+                    <h2>Your Links</h2>
+                    <div id="content-container" class="links-grid">
+                        <div class="no-links">No links saved yet. Add some using the form above.</div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -445,10 +673,13 @@
         const quoteElement = document.getElementById('quote');
         const authorElement = document.getElementById('author');
         const newQuoteButton = document.getElementById('new-quote');
-
-        // API Key for OpenWeatherMap (this is a free key for demonstration)
-        // Note: In a production app, you should protect your API key 
-        const API_KEY = '35d79d8a7537d413ae72ff299e4aaab5';
+        const dashboardPage = document.getElementById('dashboard-page');
+        const quickLinksPage = document.getElementById('quick-links-page');
+        const navLinks = document.querySelectorAll('.navbar a');
+        const addLinkForm = document.getElementById('add-link-form');
+        const linkNameInput = document.getElementById('link-name');
+        const linkUrlInput = document.getElementById('link-url');
+        const contentContainer = document.getElementById('content-container');
 
         // Set default due date to today and time to end of day
         const today = new Date();
@@ -461,6 +692,28 @@
             zipInput.value = savedZip;
             getWeather(savedZip);
         }
+
+        // Navigation functionality
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                
+                // Update active link
+                navLinks.forEach(navLink => navLink.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show the selected page
+                if (page === 'dashboard') {
+                    dashboardPage.style.display = 'block';
+                    quickLinksPage.style.display = 'none';
+                } else if (page === 'quick-links') {
+                    dashboardPage.style.display = 'none';
+                    quickLinksPage.style.display = 'block';
+                    loadQuickLinks();
+                }
+            });
+        });
 
         // Update time
         function updateTime() {
@@ -493,39 +746,43 @@
             }
         });
 
-        // Get weather data from OpenWeatherMap API
+        // Get weather data from NWS API
         async function getWeather(zipCode) {
             locationElement.textContent = `ZIP: ${zipCode}`;
             weatherDescription.textContent = 'Loading...';
             
             try {
-                // First, get the coordinates for the ZIP code
-                const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${API_KEY}`);
+                // First, get the coordinates for the ZIP code using NWS API
+                // Note: NWS doesn't have a direct ZIP to coordinates API, so we'll use a fallback
+                // In a real implementation, you might need to use a different service for this step
+                const geoResponse = await fetch(`https://api.weather.gov/points/${zipCode}`);
+                
+                if (!geoResponse.ok) {
+                    throw new Error('Failed to fetch location data from NWS');
+                }
+                
                 const geoData = await geoResponse.json();
                 
-                if (geoData.cod || !geoResponse.ok) {
-                    throw new Error(geoData.message || 'Failed to fetch location');
+                // Then get the forecast using the coordinates from NWS
+                const forecastResponse = await fetch(geoData.properties.forecast);
+                const forecastData = await forecastResponse.json();
+                
+                if (!forecastResponse.ok) {
+                    throw new Error('Failed to fetch forecast data from NWS');
                 }
                 
-                // Then get the weather data using the coordinates
-                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${geoData.lat}&lon=${geoData.lon}&units=imperial&appid=${API_KEY}`);
-                const weatherData = await weatherResponse.json();
-                
-                if (weatherData.cod !== 200) {
-                    throw new Error(weatherData.message || 'Failed to fetch weather');
-                }
+                // Get the current weather conditions
+                const currentWeather = forecastData.properties.periods[0];
                 
                 // Update the UI with the weather data
-                updateWeatherUI(weatherData);
+                updateWeatherUI(currentWeather);
                 
                 // Save to localStorage
                 const weatherToSave = {
-                    temp: Math.round(weatherData.main.temp),
-                    description: weatherData.weather[0].description,
-                    icon: getWeatherIcon(weatherData.weather[0].icon),
-                    humidity: weatherData.main.humidity,
-                    wind: Math.round(weatherData.wind.speed),
-                    pressure: weatherData.main.pressure,
+                    temp: currentWeather.temperature,
+                    description: currentWeather.shortForecast,
+                    icon: getWeatherIcon(currentWeather.shortForecast),
+                    wind: currentWeather.windSpeed,
                     zipCode: zipCode
                 };
                 localStorage.setItem('weatherData', JSON.stringify(weatherToSave));
@@ -540,38 +797,35 @@
 
         // Update weather UI with data
         function updateWeatherUI(data) {
-            temperatureElement.textContent = `${Math.round(data.main.temp)}°F`;
-            weatherDescription.textContent = data.weather[0].description;
-            weatherIcon.innerHTML = getWeatherIcon(data.weather[0].icon);
-            humidityElement.textContent = `${data.main.humidity}%`;
-            windElement.textContent = `${Math.round(data.wind.speed)} mph`;
-            pressureElement.textContent = `${data.main.pressure} hPa`;
+            temperatureElement.textContent = `${data.temperature}°F`;
+            weatherDescription.textContent = data.shortForecast;
+            weatherIcon.innerHTML = getWeatherIcon(data.shortForecast);
+            windElement.textContent = data.windSpeed;
+            
+            // NWS doesn't provide humidity and pressure in the basic forecast
+            humidityElement.textContent = 'N/A';
+            pressureElement.textContent = 'N/A';
         }
 
-        // Get appropriate weather icon
-        function getWeatherIcon(iconCode) {
-            const iconMap = {
-                '01d': '<i class="fas fa-sun"></i>',
-                '01n': '<i class="fas fa-moon"></i>',
-                '02d': '<i class="fas fa-cloud-sun"></i>',
-                '02n': '<i class="fas fa-cloud-moon"></i>',
-                '03d': '<i class="fas fa-cloud"></i>',
-                '03n': '<i class="fas fa-cloud"></i>',
-                '04d': '<i class="fas fa-cloud"></i>',
-                '04n': '<i class="fas fa-cloud"></i>',
-                '09d': '<i class="fas fa-cloud-showers-heavy"></i>',
-                '09n': '<i class="fas fa-cloud-showers-heavy"></i>',
-                '10d': '<i class="fas fa-cloud-sun-rain"></i>',
-                '10n': '<i class="fas fa-cloud-moon-rain"></i>',
-                '11d': '<i class="fas fa-bolt"></i>',
-                '11n': '<i class="fas fa-bolt"></i>',
-                '13d': '<i class="fas fa-snowflake"></i>',
-                '13n': '<i class="fas fa-snowflake"></i>',
-                '50d': '<i class="fas fa-smog"></i>',
-                '50n': '<i class="fas fa-smog"></i>'
-            };
+        // Get appropriate weather icon based on NWS description
+        function getWeatherIcon(description) {
+            description = description.toLowerCase();
             
-            return iconMap[iconCode] || '<i class="fas fa-cloud"></i>';
+            if (description.includes('sun') || description.includes('clear')) {
+                return '<i class="fas fa-sun"></i>';
+            } else if (description.includes('cloud')) {
+                return '<i class="fas fa-cloud"></i>';
+            } else if (description.includes('rain') || description.includes('shower')) {
+                return '<i class="fas fa-cloud-rain"></i>';
+            } else if (description.includes('snow')) {
+                return '<i class="fas fa-snowflake"></i>';
+            } else if (description.includes('thunder') || description.includes('lightning')) {
+                return '<i class="fas fa-bolt"></i>';
+            } else if (description.includes('fog') || description.includes('haze')) {
+                return '<i class="fas fa-smog"></i>';
+            } else {
+                return '<i class="fas fa-cloud"></i>';
+            }
         }
 
         // Load saved weather data
@@ -582,9 +836,9 @@
                 temperatureElement.textContent = `${weatherData.temp}°F`;
                 weatherDescription.textContent = weatherData.description;
                 weatherIcon.innerHTML = weatherData.icon;
-                humidityElement.textContent = `${weatherData.humidity}%`;
-                windElement.textContent = `${weatherData.wind} mph`;
-                pressureElement.textContent = `${weatherData.pressure} hPa`;
+                windElement.textContent = weatherData.wind;
+                humidityElement.textContent = 'N/A';
+                pressureElement.textContent = 'N/A';
                 locationElement.textContent = `ZIP: ${weatherData.zipCode}`;
             }
         }
@@ -812,8 +1066,148 @@
         newQuoteButton.addEventListener('click', nextQuote);
         showQuote();
 
+        // Quick Links functionality
+        function loadQuickLinks() {
+            const links = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+            contentContainer.innerHTML = '';
+            
+            if (links.length === 0) {
+                contentContainer.innerHTML = '<div class="no-links">No links saved yet. Add some using the form above.</div>';
+                return;
+            }
+            
+            links.forEach((link, index) => {
+                const linkCard = createLinkCard(link, index);
+                contentContainer.appendChild(linkCard);
+            });
+        }
+
+        function createLinkCard(link, index) {
+            const linkCard = document.createElement('div');
+            linkCard.className = 'link-card';
+            linkCard.setAttribute('data-url', link.url);
+            
+            const domain = getDomainName(link.url);
+            
+            linkCard.innerHTML = `
+                <div class="favicon-container">
+                    <div class="default-favicon">🌐</div>
+                </div>
+                <h3 class="link-name">${link.name}</h3>
+                <p class="domain-name">${domain}</p>
+                <div class="link-actions">
+                    <button class="delete-link-btn" data-index="${index}" title="Delete link">🗑️</button>
+                </div>
+            `;
+            
+            // Add click event to open link
+            linkCard.addEventListener('click', (e) => {
+                // Don't open if user clicked on delete button
+                if (!e.target.closest('.delete-link-btn')) {
+                    window.open(link.url, '_blank');
+                }
+            });
+            
+            // Load favicon asynchronously
+            const faviconUrl = getFaviconUrl(link.url);
+            if (faviconUrl) {
+                const img = new Image();
+                img.onload = function() {
+                    const faviconContainer = linkCard.querySelector('.favicon-container');
+                    faviconContainer.innerHTML = `<img src="${faviconUrl}" alt="Favicon" class="favicon">`;
+                };
+                img.onerror = function() {
+                    // Keep the default icon if favicon fails to load
+                };
+                img.src = faviconUrl;
+            }
+            
+            // Add event listener to delete button
+            const deleteBtn = linkCard.querySelector('.delete-link-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the card click event
+                deleteLink(index);
+            });
+            
+            return linkCard;
+        }
+
+        function getDomainName(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return domain.replace('www.', '');
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function getFaviconUrl(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function deleteLink(index) {
+            const links = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+            
+            if (index >= 0 && index < links.length) {
+                if (confirm(`Are you sure you want to delete "${links[index].name}"?`)) {
+                    links.splice(index, 1);
+                    localStorage.setItem('quickLinks', JSON.stringify(links));
+                    loadQuickLinks();
+                }
+            }
+        }
+
+        addLinkForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = linkNameInput.value.trim();
+            let url = linkUrlInput.value.trim();
+            
+            if (!name) {
+                alert('Please enter a name for the link');
+                return;
+            }
+            
+            // Ensure URL has proper protocol
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            
+            // Validate URL
+            try {
+                new URL(url);
+            } catch (e) {
+                alert('Please enter a valid URL');
+                return;
+            }
+            
+            const links = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+            const newLink = {
+                name,
+                url
+            };
+            
+            links.push(newLink);
+            localStorage.setItem('quickLinks', JSON.stringify(links));
+            
+            addLinkForm.reset();
+            loadQuickLinks();
+        });
+
         // Initialize saved weather data
         loadSavedWeather();
+        
+        // Set up weather refresh every minute
+        if (savedZip) {
+            setInterval(() => {
+                getWeather(savedZip);
+            }, 60000); // 60 seconds
+        }
     </script>
 </body>
 </html>
