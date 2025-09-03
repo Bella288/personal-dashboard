@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: #333;
             min-height: 100vh;
             padding: 20px;
@@ -31,27 +32,36 @@
         }
         
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .zip-form {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto 30px;
         }
         
         .zip-form input {
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: none;
             border-radius: 4px 0 0 4px;
             width: 200px;
             font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
         }
         
         .zip-form button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             background: #FF6B6B;
             color: white;
             border: none;
@@ -68,14 +78,14 @@
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
         
         .widget {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
         }
         
@@ -84,25 +94,33 @@
         }
         
         .widget h2 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: #444;
             border-bottom: 2px solid #667eea;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         /* Time Widget */
-        #time {
-            font-size: 2.8rem;
+        .time-container {
             text-align: center;
+        }
+        
+        #time {
+            font-size: 3.2rem;
             font-weight: bold;
-            color: #333;
-            margin: 10px 0;
+            color: #222;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
         }
         
         #date {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #666;
+            margin-bottom: 10px;
         }
         
         /* Weather Widget */
@@ -111,41 +129,63 @@
         }
         
         #weather-icon {
-            font-size: 4rem;
-            margin: 10px 0;
+            font-size: 5rem;
+            margin: 15px 0;
         }
         
         #temperature {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: bold;
-            margin: 10px 0;
+            margin: 15px 0;
+            color: #222;
         }
         
         #weather-description {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #666;
+            text-transform: capitalize;
+        }
+        
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .weather-detail {
+            text-align: center;
+        }
+        
+        .weather-detail i {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 5px;
         }
         
         /* Todo Widget */
         #todo-form {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         #todo-input {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 4px 0 0 4px;
+            font-size: 1rem;
         }
         
         #todo-form button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             background: #4ECDC4;
             color: white;
             border: none;
             border-radius: 0 4px 4px 0;
             cursor: pointer;
+            font-size: 1rem;
         }
         
         #todo-list {
@@ -157,8 +197,13 @@
         .todo-item {
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 12px;
             border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        
+        .todo-item:hover {
+            background: #f9f9f9;
         }
         
         .todo-item:last-child {
@@ -167,7 +212,8 @@
         
         .todo-text {
             flex: 1;
-            margin-left: 10px;
+            margin-left: 12px;
+            font-size: 1.1rem;
         }
         
         .todo-completed .todo-text {
@@ -180,45 +226,68 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 5px 10px;
+            padding: 6px 12px;
             cursor: pointer;
+            font-size: 0.9rem;
         }
         
         /* Quote Widget */
+        .quote-container {
+            text-align: center;
+        }
+        
         #quote {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-style: italic;
             text-align: center;
-            margin: 20px 0;
+            margin: 25px 0;
             color: #444;
-            line-height: 1.5;
+            line-height: 1.6;
+            padding: 0 10px;
         }
         
         #author {
             text-align: right;
             color: #666;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
         }
         
         #new-quote {
             display: block;
             margin: 20px auto 0;
-            padding: 10px 20px;
+            padding: 12px 25px;
             background: #667eea;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background 0.3s;
+            font-size: 1rem;
         }
         
         #new-quote:hover {
             background: #5a6fd5;
         }
         
+        .loading {
+            color: #888;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            #time {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -226,44 +295,66 @@
 <body>
     <div class="container">
         <header>
-            <h1>Personal Dashboard</h1>
+            <h1><i class="fas fa-home"></i> Personal Dashboard</h1>
             <div class="zip-form">
                 <input type="text" id="zip-input" placeholder="Enter your ZIP code">
-                <button id="save-zip">Save ZIP</button>
+                <button id="save-zip"><i class="fas fa-save"></i> Save ZIP</button>
             </div>
         </header>
         
         <div class="dashboard">
             <div class="widget">
-                <h2>Current Time</h2>
-                <div id="time">00:00:00</div>
-                <div id="date">Monday, January 1, 2023</div>
-            </div>
-            
-            <div class="widget">
-                <h2>Weather</h2>
-                <div class="weather-info">
-                    <div id="weather-icon">⛅</div>
-                    <div id="temperature">--°F</div>
-                    <div id="weather-description">Enter your ZIP code</div>
-                    <div id="location">ZIP: --</div>
+                <h2><i class="fas fa-clock"></i> Current Time</h2>
+                <div class="time-container">
+                    <div id="time">00:00:00</div>
+                    <div id="date">Monday, January 1, 2023</div>
                 </div>
             </div>
             
             <div class="widget">
-                <h2>To-Do List</h2>
+                <h2><i class="fas fa-cloud-sun"></i> Weather</h2>
+                <div class="weather-info">
+                    <div id="weather-icon"><i class="fas fa-sun"></i></div>
+                    <div id="temperature">--°F</div>
+                    <div id="weather-description">Enter your ZIP code</div>
+                    <div id="location">ZIP: --</div>
+                    
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <i class="fas fa-wind"></i>
+                            <div id="humidity">--%</div>
+                            <div>Humidity</div>
+                        </div>
+                        <div class="weather-detail">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <div id="wind">-- mph</div>
+                            <div>Wind</div>
+                        </div>
+                        <div class="weather-detail">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                            <div id="pressure">-- hPa</div>
+                            <div>Pressure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget">
+                <h2><i class="fas fa-tasks"></i> To-Do List</h2>
                 <form id="todo-form">
                     <input type="text" id="todo-input" placeholder="Add a new task...">
-                    <button type="submit">Add</button>
+                    <button type="submit"><i class="fas fa-plus"></i> Add</button>
                 </form>
                 <ul id="todo-list"></ul>
             </div>
             
             <div class="widget">
-                <h2>Inspirational Quote</h2>
-                <div id="quote">The only way to do great work is to love what you do.</div>
-                <div id="author">- Steve Jobs</div>
-                <button id="new-quote">New Quote</button>
+                <h2><i class="fas fa-quote-left"></i> Inspirational Quote</h2>
+                <div class="quote-container">
+                    <div id="quote">The only way to do great work is to love what you do.</div>
+                    <div id="author">- Steve Jobs</div>
+                    <button id="new-quote"><i class="fas fa-sync"></i> New Quote</button>
+                </div>
             </div>
         </div>
     </div>
@@ -278,12 +369,19 @@
         const temperatureElement = document.getElementById('temperature');
         const weatherDescription = document.getElementById('weather-description');
         const locationElement = document.getElementById('location');
+        const humidityElement = document.getElementById('humidity');
+        const windElement = document.getElementById('wind');
+        const pressureElement = document.getElementById('pressure');
         const todoForm = document.getElementById('todo-form');
         const todoInput = document.getElementById('todo-input');
         const todoList = document.getElementById('todo-list');
         const quoteElement = document.getElementById('quote');
         const authorElement = document.getElementById('author');
         const newQuoteButton = document.getElementById('new-quote');
+
+        // API Key for OpenWeatherMap (this is a free key for demonstration)
+        // Note: In a production app, you should protect your API key 
+        const API_KEY = '1c64e70b9e6f5b7a4b0d729e2d8c6d5f';
 
         // Load saved ZIP code from localStorage
         const savedZip = localStorage.getItem('zipCode');
@@ -320,54 +418,100 @@
             }
         });
 
-        // Get weather data (simulated with mock data)
-        function getWeather(zipCode) {
-            // In a real application, you would fetch from a weather API
-            // For this example, we'll use mock data
+        // Get weather data from OpenWeatherMap API
+        async function getWeather(zipCode) {
             locationElement.textContent = `ZIP: ${zipCode}`;
+            weatherDescription.textContent = 'Loading...';
             
-            // Simulate API call with setTimeout
-            setTimeout(() => {
-                // Mock weather data based on season
-                const months = new Date().getMonth();
-                let temp, description, icon;
+            try {
+                // First, get the coordinates for the ZIP code
+                const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${API_KEY}`);
+                const geoData = await geoResponse.json();
                 
-                if (months >= 2 && months <= 4) { // Spring
-                    temp = Math.floor(Math.random() * 15) + 60; // 60-75°F
-                    description = "Partly Cloudy";
-                    icon = "🌤️";
-                } else if (months >= 5 && months <= 7) { // Summer
-                    temp = Math.floor(Math.random() * 20) + 75; // 75-95°F
-                    description = "Sunny";
-                    icon = "☀️";
-                } else if (months >= 8 && months <= 10) { // Fall
-                    temp = Math.floor(Math.random() * 20) + 50; // 50-70°F
-                    description = "Cloudy";
-                    icon = "☁️";
-                } else { // Winter
-                    temp = Math.floor(Math.random() * 30) + 20; // 20-50°F
-                    description = "Snowy";
-                    icon = "❄️";
+                if (geoData.cod || !geoResponse.ok) {
+                    throw new Error(geoData.message || 'Failed to fetch location');
                 }
                 
-                temperatureElement.textContent = `${temp}°F`;
-                weatherDescription.textContent = description;
-                weatherIcon.textContent = icon;
+                // Then get the weather data using the coordinates
+                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${geoData.lat}&lon=${geoData.lon}&units=imperial&appid=${API_KEY}`);
+                const weatherData = await weatherResponse.json();
+                
+                if (weatherData.cod !== 200) {
+                    throw new Error(weatherData.message || 'Failed to fetch weather');
+                }
+                
+                // Update the UI with the weather data
+                updateWeatherUI(weatherData);
                 
                 // Save to localStorage
-                const weatherData = { temp, description, icon, zipCode };
-                localStorage.setItem('weatherData', JSON.stringify(weatherData));
-            }, 500);
+                const weatherToSave = {
+                    temp: Math.round(weatherData.main.temp),
+                    description: weatherData.weather[0].description,
+                    icon: getWeatherIcon(weatherData.weather[0].icon),
+                    humidity: weatherData.main.humidity,
+                    wind: Math.round(weatherData.wind.speed),
+                    pressure: weatherData.main.pressure,
+                    zipCode: zipCode
+                };
+                localStorage.setItem('weatherData', JSON.stringify(weatherToSave));
+                
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                weatherDescription.textContent = 'Error loading weather data';
+                // Try to load saved weather data as fallback
+                loadSavedWeather();
+            }
+        }
+
+        // Update weather UI with data
+        function updateWeatherUI(data) {
+            temperatureElement.textContent = `${Math.round(data.main.temp)}°F`;
+            weatherDescription.textContent = data.weather[0].description;
+            weatherIcon.innerHTML = getWeatherIcon(data.weather[0].icon);
+            humidityElement.textContent = `${data.main.humidity}%`;
+            windElement.textContent = `${Math.round(data.wind.speed)} mph`;
+            pressureElement.textContent = `${data.main.pressure} hPa`;
+        }
+
+        // Get appropriate weather icon
+        function getWeatherIcon(iconCode) {
+            const iconMap = {
+                '01d': '<i class="fas fa-sun"></i>',
+                '01n': '<i class="fas fa-moon"></i>',
+                '02d': '<i class="fas fa-cloud-sun"></i>',
+                '02n': '<i class="fas fa-cloud-moon"></i>',
+                '03d': '<i class="fas fa-cloud"></i>',
+                '03n': '<i class="fas fa-cloud"></i>',
+                '04d': '<i class="fas fa-cloud"></i>',
+                '04n': '<i class="fas fa-cloud"></i>',
+                '09d': '<i class="fas fa-cloud-showers-heavy"></i>',
+                '09n': '<i class="fas fa-cloud-showers-heavy"></i>',
+                '10d': '<i class="fas fa-cloud-sun-rain"></i>',
+                '10n': '<i class="fas fa-cloud-moon-rain"></i>',
+                '11d': '<i class="fas fa-bolt"></i>',
+                '11n': '<i class="fas fa-bolt"></i>',
+                '13d': '<i class="fas fa-snowflake"></i>',
+                '13n': '<i class="fas fa-snowflake"></i>',
+                '50d': '<i class="fas fa-smog"></i>',
+                '50n': '<i class="fas fa-smog"></i>'
+            };
+            
+            return iconMap[iconCode] || '<i class="fas fa-cloud"></i>';
         }
 
         // Load saved weather data
-        const savedWeather = localStorage.getItem('weatherData');
-        if (savedWeather) {
-            const weatherData = JSON.parse(savedWeather);
-            temperatureElement.textContent = `${weatherData.temp}°F`;
-            weatherDescription.textContent = weatherData.description;
-            weatherIcon.textContent = weatherData.icon;
-            locationElement.textContent = `ZIP: ${weatherData.zipCode}`;
+        function loadSavedWeather() {
+            const savedWeather = localStorage.getItem('weatherData');
+            if (savedWeather) {
+                const weatherData = JSON.parse(savedWeather);
+                temperatureElement.textContent = `${weatherData.temp}°F`;
+                weatherDescription.textContent = weatherData.description;
+                weatherIcon.innerHTML = weatherData.icon;
+                humidityElement.textContent = `${weatherData.humidity}%`;
+                windElement.textContent = `${weatherData.wind} mph`;
+                pressureElement.textContent = `${weatherData.pressure} hPa`;
+                locationElement.textContent = `ZIP: ${weatherData.zipCode}`;
+            }
         }
 
         // To-do list functionality
@@ -375,6 +519,15 @@
 
         function renderTodos() {
             todoList.innerHTML = '';
+            
+            if (todos.length === 0) {
+                const emptyMessage = document.createElement('li');
+                emptyMessage.textContent = 'No tasks yet. Add a new task!';
+                emptyMessage.classList.add('loading');
+                todoList.appendChild(emptyMessage);
+                return;
+            }
+            
             todos.forEach((todo, index) => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${todo.completed ? 'todo-completed' : ''}`;
@@ -390,7 +543,7 @@
                 
                 const button = document.createElement('button');
                 button.className = 'delete-btn';
-                button.textContent = 'Delete';
+                button.innerHTML = '<i class="fas fa-trash"></i>';
                 button.addEventListener('click', () => deleteTodo(index));
                 
                 li.appendChild(checkbox);
@@ -456,6 +609,14 @@
             {
                 text: "Do not go where the path may lead, go instead where there is no path and leave a trail.",
                 author: "Ralph Waldo Emerson"
+            },
+            {
+                text: "It is during our darkest moments that we must focus to see the light.",
+                author: "Aristotle"
+            },
+            {
+                text: "Be yourself; everyone else is already taken.",
+                author: "Oscar Wilde"
             }
         ];
 
@@ -475,6 +636,9 @@
 
         newQuoteButton.addEventListener('click', nextQuote);
         showQuote();
+
+        // Initialize saved weather data
+        loadSavedWeather();
     </script>
 </body>
 </html>
