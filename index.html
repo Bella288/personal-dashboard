@@ -856,31 +856,60 @@
                 
                 const pointsData = await pointsResponse.json();
                 
-                // Get the forecast URL
-                const forecastUrl = pointsData.properties.forecast;
+                // Get the observation stations URL
+                const stationsUrl = pointsData.properties.observationStations;
                 
-                // Get the forecast data
-                const forecastResponse = await fetch(forecastUrl);
+                // Get the list of observation stations
+                const stationsResponse = await fetch(stationsUrl);
                 
-                if (!forecastResponse.ok) {
-                    throw new Error('Failed to fetch forecast data from NWS');
+                if (!stationsResponse.ok) {
+                    throw new Error('Failed to fetch observation stations from NWS');
                 }
                 
-                const forecastData = await forecastResponse.json();
+                const stationsData = await stationsResponse.json();
                 
-                // Get the current period forecast (first period)
-                const currentPeriod = forecastData.properties.periods[0];
+                // Get the closest station (first in the list)
+                if (stationsData.features.length === 0) {
+                    throw new Error('No observation stations found');
+                }
                 
-                // Update the UI with the weather data
-                updateWeatherUI(currentPeriod);
+                const stationId = stationsData.features[0].properties.stationIdentifier;
+                
+                // Get the latest observations from this station
+                const observationsResponse = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
+                
+                if (!observationsResponse.ok) {
+                    throw new Error('Failed to fetch observations from NWS');
+                }
+                
+                const observationsData = await observationsResponse.json();
+                
+                // Extract the current weather data
+                const properties = observationsData.properties;
+                const tempCelsius = properties.temperature.value;
+                
+                if (tempCelsius === null) {
+                    throw new Error('Temperature data not available');
+                }
+                
+                // Convert to Fahrenheit
+                const tempFahrenheit = Math.round((tempCelsius * 9/5) + 32);
+                
+                // Update the UI with the current weather data
+                updateWeatherUI({
+                    temperature: tempFahrenheit,
+                    temperatureUnit: 'F',
+                    shortForecast: properties.textDescription || 'Current conditions',
+                    windSpeed: properties.windSpeed ? `${properties.windSpeed.value} mph` : '-- mph'
+                });
                 
                 // Save to localStorage
                 const weatherToSave = {
-                    temp: currentPeriod.temperature,
-                    description: currentPeriod.shortForecast,
-                    icon: getWeatherIcon(currentPeriod.shortForecast),
-                    wind: currentPeriod.windSpeed,
-                    humidity: '--%', // NWS forecast doesn't provide humidity in this endpoint
+                    temp: tempFahrenheit,
+                    description: properties.textDescription || 'Current conditions',
+                    icon: getWeatherIcon(properties.textDescription),
+                    wind: properties.windSpeed ? `${properties.windSpeed.value} mph` : '-- mph',
+                    humidity: properties.relativeHumidity ? `${properties.relativeHumidity.value}%` : '--%',
                     zipCode: zipCode
                 };
                 localStorage.setItem('weatherData', JSON.stringify(weatherToSave));
@@ -996,7 +1025,7 @@
                 windElement.textContent = '-- mph';
             }
             
-            // NWS forecast doesn't provide humidity in this endpoint
+            // NWS observation data may provide humidity
             humidityElement.textContent = '--%';
         }
 
