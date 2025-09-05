@@ -966,9 +966,15 @@
             
             alerts.forEach(alert => {
                 const properties = alert.properties;
+                
+                // Check if properties and eventType exist
+                if (!properties || !properties.eventType) {
+                    return; // Skip this alert if properties are missing
+                }
+                
                 const event = properties.eventType;
-                const headline = properties.headline;
-                const description = properties.description;
+                const headline = properties.headline || 'Weather Alert';
+                const description = properties.description || '';
                 
                 if (event.includes('Warning')) {
                     warnings.push({ headline, description });
